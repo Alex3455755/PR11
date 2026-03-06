@@ -32,6 +32,8 @@
 				
 				<div>
 					<?php
+
+					$secretKey = "qazalskdjflksjdfks";
 						$query_news = $mysqli->query("SELECT * FROM `news`;");
 						while($read_news = $query_news->fetch_assoc()) {
 							$QueryMessages = $mysqli->query("SELECT * FROM `comments` WHERE `IdPost` = {$read_news["id"]}");
@@ -49,7 +51,7 @@
 											<div class="messages">
 												';
 												while($ReadMessages = $QueryMessages->fetch_assoc()) {
-													echo "<div>".$ReadMessages["Messages"]."</div>";
+													echo "<div>".decryptAES($ReadMessages["Messages"],$secretKey)."</div>";
 												}
 											echo '</div>';
 
@@ -67,6 +69,33 @@
 									</div>
 								</div>
 							';
+						}
+						$secretKey = "qazalskdjflksjdfks";
+						function decryptAES($encryptedData, $key){
+
+							$data = base64_decode($encryptedData);
+
+							if($data === false || strlen($data)<17){
+								error_log('Invalid data');
+								return false;
+							}
+
+							$iv = substr($data,0,16);
+							
+							$encrypted = substr($data,16);
+
+							$keyHash = md5($key);
+							$keyBytes = hex2bin($keyHash);
+
+							$decrypted = openssl_decrypt(
+								$encrypted,
+								'aes-128-cbc',
+								$keyBytes,
+								OPENSSL_RAW_DATA,
+								$iv
+							);
+
+							return $decrypted;
 						}
 					?>
 					<div class="footer">

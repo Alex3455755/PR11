@@ -36,7 +36,7 @@
 
 	$secretKey = "qazalskdjflksjdfks";
 
-	$Message = decryptAES($Message_encrypted,$secretKey);
+	$Message = $Message_encrypted;
     $IdPost = decryptAES($IdPost_encrypted,$secretKey);
 
     $mysqli->query("INSERT INTO `comments`(`IdUser`, `IdPost`, `Messages`) VALUES ({$IdUser}, {$IdPost}, '{$Message}');");
